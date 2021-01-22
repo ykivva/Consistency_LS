@@ -13,11 +13,10 @@ from torchvision import models
 from utils import *
 from models import TrainableModel, DataParallelModel
 from task_configs import get_task, task_map, Task, RealityTask, ImageTask
-from model_configs import get_model_UNet_LS, get_task_edges
 
 from modules.percep_nets import DenseNet, Dense1by1Net, DenseKernelsNet, DeepNet, BaseNet, WideNet, PyramidNet
 from modules.depth_nets import UNetDepth
-from modules.unet import UNet, UNetOld, UNetOld2, UNetReshade, UNet_LS_down, UNet_LS_up, UNet_LS
+from modules.unet import UNet, UNetOld, UNetOld2, UNetReshade
 from modules.resnet import ResNetClass
 
 
@@ -170,8 +169,6 @@ class Transfer(nn.Module):
         if self.model is None:
             if self.path is not None:
                 self.model = DataParallelModel.load(self.model_type().to(DEVICE), self.path)
-                # if optimizer:
-                #     self.model.compile(torch.optim.Adam, lr=3e-5, weight_decay=2e-6, amsgrad=True)
             else:
                 self.model = self.model_type().to(DEVICE)
                 if isinstance(self.model, nn.Module):
@@ -183,48 +180,13 @@ class Transfer(nn.Module):
         preds = util_checkpoint(self.model, x) if self.checkpoint else self.model(x)
         preds.task = self.dest_task
         return preds
-
-    def __repr__(self):
-        return self.name or str(self.src_task) + " -> " + str(self.dest_task)
-
-
-class UNetTransfer(nn.Module):
-
-    def __init__(self, src_task, dest_task,
-                 block={"up":None, "down":None},
-                 checkpoint=True, name=None
-                ):
-        super().__init__()
-        if isinstance(src_task, str):
-            src_task = get_task(src_task)
-        if isinstance(dest_task, str):
-            dest_task = get_task(dest_task)
-
-        self.src_task, self.dest_task, self.checkpoint = src_task, dest_task, checkpoint
-        self.name = name or f"{src_task.name}2{dest_task.name}"
-        
-        if isinstance(src_task, RealityTask) and isinstance(dest_task, ImageTask): return
-        assert isinstance(block["up"], UNet_LS_up) and isinstance(block["down"], UNet_LS_down), "Can't create UNetTransfer"
-            
-        self.model = UNet_LS(model_up=block["up"], model_down=block["down"])
-
-    def to_parallel(self):
-        self.model = self.model.to(DEVICE)
-        if isinstance(self.model, nn.Module) and USE_CUDA and not isinstance(self.model, DataParallelModel):
-            self.model = DataParallelModel(self.model)
-        return self.model
-
-    def __call__(self, x):
-        self.to_parallel()
-        preds = util_checkpoint(self.model, x) if self.checkpoint else self.model(x)
-        return preds
     
     def set_requires_grad(self, requires_grad=True):
-        for p in self.parameters():
+        for p in self.model.parameters():
             p.requires_grad = requires_grad
 
     def __repr__(self):
-        return self.name or str(self.task) + " models"
+        return self.name or str(self.src_task) + " -> " + str(self.dest_task)
 
 
 class RealityTransfer(Transfer):

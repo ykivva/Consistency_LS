@@ -220,7 +220,7 @@ energy_configs = {
         },
     },
     
-    "perceptual_normal": {
+    "perceptual:x->n": {
         "paths": {
             "x": [tasks.rgb],
             "n": [tasks.normal],
@@ -244,16 +244,16 @@ energy_configs = {
             [tasks.normal, tasks.depth_zbuffer],
         ],
         "losses": {
-            "direct_normal": {
+            "direct:rgb->normal": {
                 ("train", "val"): (
                     ("n(x)", "n"),
                     ([None, True], [None])
                 ),
             },
-            "percep_normal->depth_zbuffer": {
+            "percep:rgb->normal->depth_zbuffer": {
                 ("train", "val"): (
                     ("r(n(x))", "r(n)"),
-                    ([None, True, None], [None, False])
+                    ([None, True, False], [None, False])
                 ),
             },
         },
@@ -272,7 +272,60 @@ energy_configs = {
                 error_pairs={"n(x)": "n", "r(n(x))": "r(n)"}
             ),
         },
-    },   
+    },
+    
+    "multitask:x->n&r": {
+        "paths": {
+            "x": [tasks.rgb],
+            "n": [tasks.normal],
+            "r": [tasks.depth_zbuffer],
+            "n(x)": [tasks.rgb, tasks.normal],
+            "r(x)": [tasks.rgb, tasks.depth_zbuffer],
+        },
+        "tasks_in": { 
+            "edges": [tasks.normal, tasks.depth_zbuffer],
+            "freeze": [],
+        },
+        "tasks_out": {
+            "edges": [tasks.rgb],
+            "freeze": [],
+        },
+        "direct_edges": [
+        ],
+        "freeze_list": [
+        ],
+        "losses": {
+            "direct:rgb->normal": {
+                ("train", "val"): (
+                    ("n(x)", "n"),
+                    ([None, True], [None])
+                ),
+            },
+            "direct:rgb->depth_zbuffer": {
+                ("train", "val"): (
+                    ("r(x)", "r"),
+                    ([None, True], [None])
+                ),
+            },
+        },
+        "loss_groups": [
+            ["direct:rgb->depth_zbuffer", "direct:rgb->normal"],
+        ],
+        "plots": {
+            "": dict(
+                size=256,
+                realities=("test", "ood"),
+                paths=[
+                    "x",
+                    "n",
+                    "r",
+                    "n(x)",
+                    "r(x)",
+                ],
+                error_pairs={"n(x)": "n", "r(x)": "r"}
+            ),
+        },
+    },
 }
 
 
@@ -586,7 +639,7 @@ class LSEnergyLoss(EnergyLoss):
                 direct_loss = loss_group[0]
                 losses = parse.parse("direct:{loss1}->{loss2}", direct_loss)
                 num_losses[direct_loss] = 1
-                target_weights = list(graph.edge_map[f"('{losses['loss1']}', '{losses['loss2']}')"].model.parameters())
+                target_weights = graph.get_edge_parameters(losses['loss1'], losses['loss2'])
                 
                 loss_dict[direct_loss].mean().backward(retain_graph=True)
                 mae_gradnorms[direct_loss] = (

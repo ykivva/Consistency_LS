@@ -1,1 +1,0 @@
-Multitask:rgb->noraml|depth_zbuffer
