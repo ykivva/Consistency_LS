@@ -1,1 +1,1 @@
-YKIVVA_resnet3_multitask:x->n&r_v0_, .
+YKIVVA_resnet3_multitask:x->n&r_v2_, .

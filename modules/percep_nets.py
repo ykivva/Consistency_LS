@@ -341,8 +341,8 @@ class ResidualsNetUp(TrainableModel):
         
         self.layer1 = self._make_layer(UpsampleBlock, self.cur_channels//2, layers[0], stride=2)
         self.layer2 = self._make_layer(UpsampleBlock, self.cur_channels//2, layers[1], stride=2)
-        self.layer3 = self._make_layer(UpsampleBlock, self.cur_channels//2, layers[2], stride=2)
-        self.layer4 = self._make_layer(UpsampleBlock, self.cur_channels//2, layers[3], stride=2)
+        self.layer3 = self._make_layer(UpsampleBlock, self.cur_channels//2, layers[2], stride=1)
+        self.layer4 = self._make_layer(UpsampleBlock, self.cur_channels//2, layers[3], stride=1)
 
         self.last_conv1 = nn.Conv2d(self.cur_channels, self.cur_channels, 3, padding=1)
         self.bn1 = norm_layer(self.cur_channels)
