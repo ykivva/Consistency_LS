@@ -279,16 +279,16 @@ class ResidualsNetDown(TrainableModel):
         self.layer2 = self._make_layer(BasicBlock, 2*self.cur_channels, layers[1], stride=2)
         self.layer3 = self._make_layer(BasicBlock, 2*self.cur_channels, layers[1], stride=2)
         
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
+#         for m in self.modules():
+#             if isinstance(m, nn.Conv2d):
+#                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+#             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+#                 nn.init.constant_(m.weight, 1)
+#                 nn.init.constant_(m.bias, 0)
                        
-        for m in self.modules():
-            if isinstance(m, BasicBlock):
-                nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
+#         for m in self.modules():
+#             if isinstance(m, BasicBlock):
+#                 nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
         
     def _make_layer(self, block, channels, blocks, stride=1):
         norm_layer = self._norm_layer
@@ -330,7 +330,7 @@ class ResidualsNetDown(TrainableModel):
 class ResidualsNetUp(TrainableModel):
         
     def __init__(
-        self, in_channels=256, out_channels=3, layers=[1, 1, 2, 2],
+        self, in_channels=256, out_channels=3, layers=[2, 2, 2, 2],
         norm_layer=lambda num_channels: nn.GroupNorm(8, num_channels)
     ):
         super().__init__()
@@ -349,15 +349,15 @@ class ResidualsNetUp(TrainableModel):
         self.last_conv2 = nn.Conv2d(self.cur_channels, out_channels, 1, padding=0)
         self.relu = nn.ReLU(inplace=True)
         
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
+#         for m in self.modules():
+#             if isinstance(m, nn.Conv2d):
+#                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+#             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+#                 nn.init.constant_(m.weight, 1)
+#                 nn.init.constant_(m.bias, 0)
                 
-            if isinstance(m, BasicBlock):
-                nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
+#             if isinstance(m, BasicBlock):
+#                 nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
         
     def _make_layer(self, block, channels, blocks, stride=2):
         norm_layer = self._norm_layer
