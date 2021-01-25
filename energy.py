@@ -35,7 +35,7 @@ def get_energy_loss(
 
 energy_configs = {
     
-    "perceptual+LS:x->n|r": {
+    "perceptual+LS:x->n&r": {
         "paths": {
             "x": [tasks.rgb],
             "n": [tasks.normal],
@@ -142,7 +142,7 @@ energy_configs = {
         },
     },
     
-    "perceptual:x->n|r": {
+    "perceptual:x->n&r_direct": {
         "paths": {
             "x": [tasks.rgb],
             "n": [tasks.normal],
