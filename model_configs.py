@@ -1,4 +1,5 @@
 from modules.unet import UNet
+from modules.percep_nets import ResidualsNetDown, ResidualsNetUp
 from task_configs import get_task
 from utils import *
 
@@ -41,7 +42,44 @@ model_types = {
             'up': (lambda: UNet(downsample=3, out_channels=3), f"{MODELS_DIR}/rgb_up.pth"),
         },
     },
-    'resnet_based':{},
+    'resnet_based':{
+        'normal': {
+            'down': (lambda: ResidualsNetDown(in_channels=3), f"{MODELS_DIR}/normal_down.pth"),
+            'up' : (lambda: ResidualsNetUp(out_channels=3), f"{MODELS_DIR}/normal_up.pth"),
+        },
+        'sobel_edges': {
+            'down': (lambda: ResidualsNetDown(in_channels=1), f"{MODELS_DIR}/sobel_edges_down.pth"),
+            'up': (lambda: ResidualsNetUp(out_channels=1), f"{MODELS_DIR}/sobel_edges_up.pth"),
+        },
+        'reshading': {
+            'down': (lambda: ResidualsNetDown(in_channels=3), f"{MODELS_DIR}/reshading_down.pth"),
+            'up' : (lambda: ResidualsNetUp(out_channels=3), f"{MODELS_DIR}/reshading_up.pth"),
+        },
+        'keypoints2d': {
+            'down': (lambda: ResidualsNetDown(in_channels=1), f"{MODELS_DIR}/keypoints2d_down.pth"),
+            'up' : (lambda: ResidualsNetUp(out_channels=1), f"{MODELS_DIR}/keypoints2d_up.pth"),
+        },
+        'keypoints3d': {
+            'down': (lambda: ResidualsNetDown(in_channels=1), f"{MODELS_DIR}/keypoints3d_down.pth"),
+            'up' : (lambda: ResidualsNetUp(in_channels=1), f"{MODELS_DIR}/keypoints3d_up.pth"),
+        },
+        'depth_zbuffer': {
+            'down': (lambda: ResidualsNetDown(in_channels=1), f"{MODELS_DIR}/depth_zbuffer_down.pth"),
+            'up' : (lambda: ResidualsNetUp(out_channels=1), f"{MODELS_DIR}/depth_zbuffer_up.pth"),
+        },
+        'principal_curvuture': {
+            'down': (lambda: ResidualsNetDown(in_channels=3), f"{MODELS_DIR}/principal_curvature_down.pth"),
+            'up' : (lambda: ResidualsNetUp(out_channels=3), f"{MODELS_DIR}/principal_curvature_up.pth"),
+        },
+        'edge_occlusion': {
+            'down': (lambda: ResidualsNetDown(in_channels=1), f"{MODELS_DIR}/edge_occlusion_down.pth"),
+            'up': (lambda: ResidualsNetUp(out_channels=1), f"{MODELS_DIR}/edge_occlusion_up.pth"),
+        },
+        'rgb': {
+            'down': (lambda: ResidualsNetDown(in_channels=3), f"{MODELS_DIR}/rgb_down.pth"),
+            'up': (lambda: ResidualsNetUp(out_channels=3), f"{MODELS_DIR}/rgb_up.pth"),
+        },
+    },
     ('normal', 'principal_curvature'): lambda : Dense1by1Net(),
     ('normal', 'depth_zbuffer'): lambda : UNetDepth(),
     ('normal', 'reshading'): lambda : UNet(downsample=5),

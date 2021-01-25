@@ -187,6 +187,23 @@ class Transfer(nn.Module):
 
     def __repr__(self):
         return self.name or str(self.src_task) + " -> " + str(self.dest_task)
+    
+
+class DoubleModel(TrainableModel):
+    
+    def __init__(self, model_down, model_up):
+        super().__init__()
+        self.model_down = model_down
+        self.model_up = model_up
+        
+    def forward(x):
+        out = self.model_down(x)
+        out = self.model_up(x)
+        return out
+    
+    def loss(self, pred, target):
+        loss = torch.tensor(0.0, device=pred.device)
+        return loss, (loss.detach(),)
 
 
 class RealityTransfer(Transfer):

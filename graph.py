@@ -29,7 +29,7 @@ class TaskGraph(TrainableModel):
         self, tasks, tasks_in={}, tasks_out={},
         pretrained=True, finetuned=False,
         freeze_list=[], direct_edges={}, lazy=False,
-        model_class='unet_based'
+        model_class='resnet_based'
     ):
         super().__init__()
         self.tasks = tasks
