@@ -29,7 +29,7 @@ class TaskGraph(TrainableModel):
         self, tasks, tasks_in={}, tasks_out={},
         pretrained=True, finetuned=False,
         freeze_list=[], direct_edges={}, lazy=False,
-        model_class='resnet_based'
+        model_class='unet_based'
     ):
         super().__init__()
         self.tasks = tasks
@@ -110,6 +110,12 @@ class TaskGraph(TrainableModel):
                 transfer = Transfer(src_task, dest_task, pretrained=pretrained, finetuned=finetuned)
                 transfer.freezed = key in self.freeze_list
                 
+                try:
+                    if not lazy: transfer.load_model()
+                except Exception as e:
+                    print(e)
+                    IPython.embed()
+                
                 if transfer.model_type is None:
                     continue
                 if not transfer.freezed:
@@ -117,12 +123,6 @@ class TaskGraph(TrainableModel):
                 else:
                     print("Setting link: " + str(key) + " not trainable.")
                     transfer.set_requires_grad(False)
-                
-                try:
-                    if not lazy: transfer.load_model()
-                except Exception as e:
-                    print(e)
-                    IPython.embed()
             else: continue
 
             self.edge_map[key] = transfer
