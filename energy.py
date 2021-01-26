@@ -331,7 +331,7 @@ energy_configs = {
         "paths": {
             "n": [tasks.normal],
             "r": [tasks.depth_zbuffer],
-            "r(n)": [tasks.normal, tasks.normal],
+            "r(n)": [tasks.normal, tasks.depth_zbuffer],
             "n(r)": [tasks.depth_zbuffer, tasks.normal],
         },
         "tasks_in": { 
@@ -366,7 +366,7 @@ energy_configs = {
         "plots": {
             "": dict(
                 size=256,
-                realities=("test", "ood"),
+                realities=("test",),
                 paths=[
                     "n",
                     "r",
@@ -570,7 +570,6 @@ class EnergyLoss(object):
                         reality=realities_map[reality]
                     )
 
-                pdb.set_trace()
                 shape = list(path_values[list(path_values.keys())[0]].shape)
                 shape[1] = 3
                 error_passed = 0

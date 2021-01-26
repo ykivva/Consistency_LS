@@ -6,8 +6,8 @@ from utils import *
 model_types = {
     'unet_based':{
         'normal': {
-            'down': (lambda: UNet(in_channels=3, downsample=3), f"{MODELS_DIR}/LS2normal.pth"),
-            'up' : (lambda: UNet(out_channels=3, downsample=3), f"{MODELS_DIR}/normal2LS.pth"),
+            'down': (lambda: UNet(in_channels=3, downsample=3), f"{MODELS_DIR}/normal2LS.pth"),
+            'up' : (lambda: UNet(out_channels=3, downsample=3), f"{MODELS_DIR}/LS2normal.pth"),
         },
         'sobel_edges': {
             'down': (lambda: UNet(downsample=3, in_channels=1), f"{MODELS_DIR}/sobel_edges2LS.pth"),
