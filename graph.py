@@ -58,17 +58,17 @@ class TaskGraph(TrainableModel):
             self.edges_out[task.name] = transfer
             self.edge_map[key] = transfer
             
-            if transfer.freezed:
-                transfer.set_requires_grad(False)
-            else:
-                self.params[key] = transfer
-            
             try:
                 if not lazy:
                     transfer.load_model()
             except Exception as e:
                 print(e)
                 IPython.embed()
+            
+            if transfer.freezed:
+                transfer.set_requires_grad(False)
+            else:
+                self.params[key] = transfer
         
         for task in self.tasks_in.get("edges", None):
             key = str(("LS", task.name))
@@ -83,17 +83,18 @@ class TaskGraph(TrainableModel):
             self.edges_in[task.name] = transfer
             self.edge_map[key] = transfer
             
-            if transfer.freezed: 
-                transfer.set_requires_grad(False)
-            else:
-                self.params[key] = transfer
-            
             try:
                 if not lazy:
                     transfer.load_model()
             except Exception as e:
                 print(e)
                 IPython.embed()
+            
+            if transfer.freezed: 
+                transfer.set_requires_grad(False)
+            else:
+                self.params[key] = transfer
+            
         
         # construct transfer graph
         for src_task, dest_task in itertools.product(self.tasks, self.tasks):

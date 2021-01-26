@@ -326,6 +326,57 @@ energy_configs = {
             ),
         },
     },
+    
+    "direct:n->r&r->n": {
+        "paths": {
+            "n": [tasks.normal],
+            "r": [tasks.depth_zbuffer],
+            "r(n)": [tasks.normal, tasks.normal],
+            "n(r)": [tasks.depth_zbuffer, tasks.normal],
+        },
+        "tasks_in": { 
+            "edges": [tasks.normal, tasks.depth_zbuffer],
+            "freeze": [tasks.normal, tasks.depth_zbuffer],
+        },
+        "tasks_out": {
+            "edges": [tasks.normal, tasks.depth_zbuffer],
+            "freeze": [],
+        },
+        "direct_edges": [
+        ],
+        "freeze_list": [
+        ],
+        "losses": {
+            "direct:depth_zbuffer->normal": {
+                ("train", "val"): (
+                    ("n(r)", "n"),
+                    ([None, True], [None])
+                ),
+            },
+            "direct:normal->depth_zbuffer": {
+                ("train", "val"): (
+                    ("r(n)", "r"),
+                    ([None, True], [None])
+                ),
+            },
+        },
+        "loss_groups": [
+            ["direct:normal->depth_zbuffer", "direct:depth_zbuffer->normal"],
+        ],
+        "plots": {
+            "": dict(
+                size=256,
+                realities=("test", "ood"),
+                paths=[
+                    "n",
+                    "r",
+                    "n(r)",
+                    "r(n)",
+                ],
+                error_pairs={"n(r)": "n", "r(n)": "r"}
+            ),
+        },
+    },
 }
 
 
@@ -519,6 +570,7 @@ class EnergyLoss(object):
                         reality=realities_map[reality]
                     )
 
+                pdb.set_trace()
                 shape = list(path_values[list(path_values.keys())[0]].shape)
                 shape[1] = 3
                 error_passed = 0
