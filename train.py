@@ -52,7 +52,7 @@ from fire import Fire
 import pdb
 
 def main(
-    loss_config="", mode="latent_space",
+    loss_config="", mode="latent_space", model_class="resnet_based",
     fast=False, batch_size=None,
     subset_size=None, max_epochs=500, dataaug=False, **kwargs,
 ):
@@ -98,6 +98,7 @@ def main(
         pretrained=True, finetuned=False,
         freeze_list=energy_loss.freeze_list,
         direct_edges=energy_loss.direct_edges,
+        model_class=model_class
     )
     graph.compile(torch.optim.Adam, lr=3e-5, weight_decay=2e-6, amsgrad=True)
     

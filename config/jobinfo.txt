@@ -1,1 +1,1 @@
-YKIVVA_unet3_direct:n->r&r->n_v0_, .
+YKIVVA_resnet3_direct:n->r&r->n_v1_, .

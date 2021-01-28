@@ -21,6 +21,7 @@ DOWNSAMPLE = 6
 
 current_dir = os.path.dirname(__file__)
 EXPERIMENT, BASE_DIR = open(os.path.join(current_dir, "config/jobinfo.txt")).read().strip().split(', ')
+BASE_DIR = os.path.normpath(os.path.join(current_dir, BASE_DIR))
 JOB = "_".join(EXPERIMENT.split("_")[0:-1])
 
 MODELS_DIR = f"{BASE_DIR}/models"
