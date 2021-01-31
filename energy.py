@@ -220,7 +220,98 @@ energy_configs = {
         },
     },
     
-    "perceptual:x->n": {
+    "perceptual:x->n&r": {
+        "paths": {
+            "x": [tasks.rgb],
+            "n": [tasks.normal],
+            "r": [tasks.depth_zbuffer],
+            "n(x)": [tasks.rgb, tasks.normal],
+            "r(x)": [tasks.rgb, tasks.depth_zbuffer],
+            "r(n)": [tasks.normal, tasks.depth_zbuffer],
+            "n(r)": [tasks.depth_zbuffer, tasks.normal],
+            "n(r(x))": [tasks.rgb, tasks.depth_zbuffer, tasks.normal],
+            "r(n(x))": [tasks.rgb, tasks.normal, tasks.depth_zbuffer],
+        },
+        "tasks_in": { 
+            "edges": [tasks.normal, tasks.depth_zbuffer],
+            "freeze": [],
+        },
+        "tasks_out": {
+            "edges": [tasks.rgb, tasks.normal, tasks.depth_zbuffer],
+            "freeze": [],
+        },
+        "direct_edges": [
+        ],
+        "freeze_list": [
+        ],
+        "losses": {
+            "direct:rgb->normal": {
+                ("train", "val"): (
+                    ("n(x)", "n"),
+                    ([None, True], [None])
+                )
+            },
+            "percep:rgb->normal->depth_zbuffer": {
+                ("train", "val"): (
+                    ("r(n(x))", "r(n)"),
+                    ([None, True, False], [None, False])
+                ),
+            },
+            "direct:rgb->depth_zbuffer": {
+                ("train", "val"): (
+                    ("r(x)", "r"),
+                    ([None, True], [None])
+                ),
+            },
+            "percep:rgb->depth_zbuffer->normal": {
+                ("train", "val"): (
+                    ("n(r(x))", "n(r)"),
+                    ([None, True, False], [None, False])
+                ),
+            },
+            "direct:normal->depth_zbuffer": {
+                ("train", "val"): (
+                    ("n(x)", "n"),
+                    ([None, True], [None])
+                )
+            },
+            "direct:depth_zbuffer->normal": {
+                ("train", "val"): (
+                    ("n(x)", "n"),
+                    ([None, True], [None])
+                )
+            },
+        },
+        "loss_groups": [
+            ["direct:normal->depth_zbuffer", "direct:depth_zbuffer->normal"],
+            ["direct:rgb->depth_zbuffer", "percep:rgb->depth_zbuffer->normal"],
+            ["direct:rgb->normal", "percep:rgb->normal->depth_zbuffer"],
+        ],
+        "plots": {
+            "": dict(
+                size=256,
+                realities=("test", "ood"),
+                paths=[
+                    "x",
+                    "n",
+                    "r",
+                    "n(x)",
+                    "r(x)",
+                    "r(n)",
+                    "n(r)",
+                    "r(n(x))",
+                    "n(r(x))",
+                ],
+                error_pairs={
+                    "n(x)": "n",
+                    "r(n(x))": "r(n)",
+                    "r(x)": "r",
+                    "n(r(x))": "n(r)"}
+            ),
+        },
+    },
+    
+    "perceptual:x->n_direct": {
         "paths": {
             "x": [tasks.rgb],
             "n": [tasks.normal],

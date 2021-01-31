@@ -71,7 +71,6 @@ class TaskGraph(TrainableModel):
                 self.params[key] = transfer
         
         for task in self.tasks_in.get("edges", None):
-            pdb.set_trace()
             key = str(("LS", task.name))
             model_type, path = transfer_models.get(task.name, {})["up"]
             if not os.path.isfile(path):

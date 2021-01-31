@@ -1,1 +1,1 @@
-YKIVVA_resnet3_direct:n->r&r->n_v1_, .
+YKIVVA_unet3_perceptual:x->n&r_v0_, .
