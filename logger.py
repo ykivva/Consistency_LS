@@ -94,7 +94,7 @@ class Logger(BaseLogger):
 class VisdomLogger(BaseLogger):
 
     def __init__(self, *args, **kwargs):
-        self.env = kwargs.pop('env', 'CH')
+        self.env = kwargs.pop('env', 'YKIVVA')
         self.port = kwargs.pop('port', 8097)
         self.server = kwargs.pop('server', '127.0.0.1')
         self.delete = kwargs.pop('delete', True)

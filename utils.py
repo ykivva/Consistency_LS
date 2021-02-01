@@ -16,10 +16,13 @@ import IPython
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 USE_CUDA = torch.cuda.is_available()
+PORT = 6932
+SERVER = "10.90.47.7"
 dtype = torch.cuda.FloatTensor if USE_CUDA else torch.FloatTensor
-DOWNSAMPLE = 6
 
 current_dir = os.path.dirname(__file__)
+with config_file as open(os.path.join(current_dir, "config/jobinfo.txt")):
+
 EXPERIMENT, BASE_DIR = open(os.path.join(current_dir, "config/jobinfo.txt")).read().strip().split(', ')
 BASE_DIR = os.path.normpath(os.path.join(current_dir, BASE_DIR))
 JOB = "_".join(EXPERIMENT.split("_")[0:-1])

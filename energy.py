@@ -23,15 +23,15 @@ import IPython
 import pdb
 
 def get_energy_loss(
-    config="", mode="winrate", **kwargs,
+    config="", loss_mode="latent_space", **kwargs,
 ):
     """ Loads energy loss from config dict. """
-    if isinstance(mode, str):
-        mode = {
+    if isinstance(loss_mode, str):
+        loss_mode = {
             "standard": EnergyLoss,
             "latent_space": LSEnergyLoss,
-        }[mode]
-    return mode(**energy_configs[config], **kwargs)
+        }[loss_mode]
+    return loss_mode(**energy_configs[config], **kwargs)
 
 energy_configs = {
     

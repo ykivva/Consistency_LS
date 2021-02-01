@@ -52,14 +52,16 @@ from fire import Fire
 import pdb
 
 def main(
-    loss_config="", mode="latent_space", model_class="resnet_based",
+    loss_config=None, loss_mode=None, model_class=None,
     fast=False, batch_size=None,
     subset_size=None, max_epochs=500, dataaug=False, **kwargs,
 ):
-
+    loss_config = loss_config or LOSS_CONFIG
+    loss_mode = loss_mode or LOSS_MODE
+    model_class = model_class or MODEL_CLASS
     # CONFIG
     batch_size = batch_size or (4 if fast else 64)
-    energy_loss = get_energy_loss(config=loss_config, mode=mode, **kwargs)
+    energy_loss = get_energy_loss(config=loss_config, loss_mode=loss_mode, **kwargs)
 
     # DATA LOADING
     train_dataset, val_dataset, train_step, val_step = load_train_val(
@@ -105,7 +107,7 @@ def main(
     # LOGGING
     os.makedirs(RESULTS_DIR, exist_ok=True)
     os.makedirs(RESULTS_DIR_MODELS, exist_ok=True)
-    logger = VisdomLogger("train", env=JOB)
+    logger = VisdomLogger("train", env=JOB, port=PORT, server=SERVER)
     logger.add_hook(lambda logger, data: logger.step(), feature="loss", freq=20)
     logger.add_hook(
         lambda _, __: graph.save(f"{RESULTS_DIR}/graph.pth", RESULTS_DIR_MODELS),

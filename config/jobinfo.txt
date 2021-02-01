@@ -1,1 +1,2 @@
-YKIVVA_unet3_perceptual:x->n&r_v0_, .
+LOSS_CONFIG, LOSS_MODE, MODEL_CLASS,
+YKIVVA_NAME, .
