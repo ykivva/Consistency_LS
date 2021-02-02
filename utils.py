@@ -21,9 +21,9 @@ SERVER = "10.90.47.7"
 dtype = torch.cuda.FloatTensor if USE_CUDA else torch.FloatTensor
 
 current_dir = os.path.dirname(__file__)
-with config_file as open(os.path.join(current_dir, "config/jobinfo.txt")):
-
-EXPERIMENT, BASE_DIR = open(os.path.join(current_dir, "config/jobinfo.txt")).read().strip().split(', ')
+with open(os.path.join(current_dir, "config/jobinfo.txt")) as config_file:
+    out = config_file.read().strip().split(',\n')
+    LOSS_CONFIG, LOSS_MODE, MODEL_CLASS, EXPERIMENT, BASE_DIR = out
 BASE_DIR = os.path.normpath(os.path.join(current_dir, BASE_DIR))
 JOB = "_".join(EXPERIMENT.split("_")[0:-1])
 
