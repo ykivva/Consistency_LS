@@ -30,7 +30,7 @@ from modules.unet import UNet
 def main(
     loss_config="conservative_full",
     mode="standard",
-    pretrained=True, finetuned=False, batch_size=16,
+    pretrained=True, batch_size=16,
     ood_batch_size=None, subset_size=None,
     cont=None,
     use_l1=True, num_workers=32, data_dir=None, save_dir='mount/shared/', **kwargs,
@@ -62,7 +62,6 @@ def main(
 
 
     graph = TaskGraph(tasks=energy_loss.tasks + [train_subset],
-                      finetuned=finetuned,
                       freeze_list=energy_loss.freeze_list, lazy=True,
                       initialize_from_transfer=True,
                       )

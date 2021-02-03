@@ -20,18 +20,13 @@ PORT = 6932
 SERVER = "10.90.47.7"
 dtype = torch.cuda.FloatTensor if USE_CUDA else torch.FloatTensor
 
-current_dir = os.path.dirname(__file__)
-with open(os.path.join(current_dir, "config/jobinfo.txt")) as config_file:
+CURRENT_DIR = os.path.dirname(__file__)
+with open(os.path.join(CURRENT_DIR, "config/jobinfo.txt")) as config_file:
     out = config_file.read().strip().split(',\n')
     LOSS_CONFIG, LOSS_MODE, MODEL_CLASS, EXPERIMENT, BASE_DIR = out
-BASE_DIR = os.path.normpath(os.path.join(current_dir, BASE_DIR))
-JOB = "_".join(EXPERIMENT.split("_")[0:-1])
 
-MODELS_DIR = f"{BASE_DIR}/models"
 OLD_MODELS_DIR = "/scratch/consistency_shared/models"
 DATA_DIRS = [f"/datasets/taskonomydata"]
-RESULTS_DIR = f"{BASE_DIR}/results/results_{EXPERIMENT}"
-RESULTS_DIR_MODELS = f"{BASE_DIR}/results/results_{EXPERIMENT}/models"
 SHARED_DIR = f"/scratch/consistency_shared"
 OOD_DIR = f"{SHARED_DIR}/ood_standard_set"
 
@@ -84,13 +79,6 @@ def get_files(exp, data_dirs=DATA_DIRS, recursive=False):
 
     # pickle.dump(files, open(cache, 'wb'))
     return files
-
-
-def get_finetuned_model_path(parents):
-    if BASE_DIR == "/":
-        return f"{RESULTS_DIR}/" + "_".join([parent.name for parent in parents[::-1]]) + ".pth"
-    else:
-        return f"{MODELS_DIR}/finetuned/" + "_".join([parent.name for parent in parents[::-1]]) + ".pth"
 
 
 def plot_images(model, logger, test_set, dest_task="normal",

@@ -1,5 +1,5 @@
-LOSS_CONFIG,
-LOSS_MODE,
-MODEL_CLASS,
-YKIVVA_NAME_,
+multitask:x->n&r,
+latent_space,
+unet_based,
+YKIVVA_multitask:x->n&r_incremental_,
 .

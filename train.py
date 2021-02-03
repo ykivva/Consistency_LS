@@ -52,13 +52,35 @@ from fire import Fire
 import pdb
 
 def main(
-    loss_config=None, loss_mode=None, model_class=None,
+    job_config="jobinfo.txt", models_dir="models",
     fast=False, batch_size=None,
     subset_size=None, max_epochs=500, dataaug=False, **kwargs,
 ):
+    loss_config, loss_mode, model_class = None, None, None
+    experiment, base_dir = None, None
+    current_dir = os.path.dirname(__file__)
+    job_config = os.path.normpath(
+        os.path.join(
+            os.path.join(current_dir, "config"), job_config
+            )
+        )
+    if os.path.isfile(job_config):
+        with open(job_config) as config_file:
+            out = config_file.read().strip().split(',\n')
+            loss_config, loss_mode, model_class, experiment, base_dir = out
     loss_config = loss_config or LOSS_CONFIG
     loss_mode = loss_mode or LOSS_MODE
     model_class = model_class or MODEL_CLASS
+    base_dir = base_dir or BASE_DIR
+
+    base_dir = os.path.normpath(os.path.join(current_dir, base_dir))
+    experiment = experiment or EXPERIMENT
+    job = "_".join(experiment.split("_")[0:-1])
+
+    models_dir = os.path.join(base_dir, models_dir)
+    results_dir = f"{base_dir}/results/results_{experiment}"
+    results_dir_models = f"{base_dir}/results/results_{experiment}/models"
+
     # CONFIG
     batch_size = batch_size or (4 if fast else 64)
     energy_loss = get_energy_loss(config=loss_config, loss_mode=loss_mode, **kwargs)
@@ -97,7 +119,7 @@ def main(
         tasks=energy_loss.tasks + realities,
         tasks_in=energy_loss.tasks_in,
         tasks_out=energy_loss.tasks_out,
-        pretrained=True, finetuned=False,
+        pretrained=True, models_dir=models_dir,
         freeze_list=energy_loss.freeze_list,
         direct_edges=energy_loss.direct_edges,
         model_class=model_class
@@ -105,12 +127,12 @@ def main(
     graph.compile(torch.optim.Adam, lr=3e-5, weight_decay=2e-6, amsgrad=True)
     
     # LOGGING
-    os.makedirs(RESULTS_DIR, exist_ok=True)
-    os.makedirs(RESULTS_DIR_MODELS, exist_ok=True)
-    logger = VisdomLogger("train", env=JOB, port=PORT, server=SERVER)
+    os.makedirs(results_dir, exist_ok=True)
+    os.makedirs(results_dir_models, exist_ok=True)
+    logger = VisdomLogger("train", env=job, port=PORT, server=SERVER)
     logger.add_hook(lambda logger, data: logger.step(), feature="loss", freq=20)
     logger.add_hook(
-        lambda _, __: graph.save(f"{RESULTS_DIR}/graph.pth", RESULTS_DIR_MODELS),
+        lambda _, __: graph.save(f"{results_dir}/graph.pth", results_dir_models),
         feature="epoch",
         freq=1
     )

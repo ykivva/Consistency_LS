@@ -400,7 +400,8 @@ energy_configs = {
             },
         },
         "loss_groups": [
-            ["direct:rgb->depth_zbuffer", "direct:rgb->normal"],
+            ["direct:rgb->depth_zbuffer"],
+            ["direct:rgb->normal"],
         ],
         "plots": {
             "": dict(

@@ -27,15 +27,15 @@ class TaskGraph(TrainableModel):
 
     def __init__(
         self, tasks, tasks_in={}, tasks_out={},
-        pretrained=True, finetuned=False,
+        pretrained=True,
         freeze_list=[], direct_edges={}, lazy=False,
-        model_class='resnet_based'
+        model_class='resnet_based', models_dir="./models"
     ):
         super().__init__()
         self.tasks = tasks
         self.tasks += [task.base for task in self.tasks if hasattr(task, "base")]
         self.tasks_in, self.tasks_out = tasks_in, tasks_out
-        self.pretrained, self.finetuned = pretrained, finetuned
+        self.pretrained = pretrained
         self.edges_in, self.edges_out, = {}, {}
         self.direct_edges = direct_edges
         self.freeze_list = freeze_list
@@ -47,6 +47,7 @@ class TaskGraph(TrainableModel):
         for task in self.tasks_out.get("edges", None):
             key = str((task.name, "LS"))
             model_type, path = transfer_models.get(task.name, {})["down"]
+            path = os.path.join(models_dir, path)
             if not os.path.isfile(path):
                 path = None
             transfer = Transfer(
@@ -73,6 +74,7 @@ class TaskGraph(TrainableModel):
         for task in self.tasks_in.get("edges", None):
             key = str(("LS", task.name))
             model_type, path = transfer_models.get(task.name, {})["up"]
+            path = os.path.join(models_dir, path)
             if not os.path.isfile(path):
                 path = None
             transfer = Transfer(
@@ -108,7 +110,7 @@ class TaskGraph(TrainableModel):
                 transfer = RealityTransfer(src_task, dest_task)
                 self.edge_map[key] = transfer
             elif key in self.direct_edges:
-                transfer = Transfer(src_task, dest_task, pretrained=pretrained, finetuned=finetuned)
+                transfer = Transfer(src_task, dest_task, pretrained=pretrained)
                 transfer.freezed = key in self.freeze_list
                 
                 try:

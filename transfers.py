@@ -118,7 +118,7 @@ class Transfer(nn.Module):
 
     def __init__(self, src_task, dest_task,
         checkpoint=True, name=None, model_type=None, path=None,
-        pretrained=True, finetuned=False
+        pretrained=True
     ):
         super().__init__()
         if isinstance(src_task, str) and isinstance(dest_task, str):
@@ -132,13 +132,6 @@ class Transfer(nn.Module):
 
         self.model_type, self.path = model_type or saved_type, path or saved_path
         self.model = None
-
-        if finetuned:
-            path = f"{MODELS_DIR}/ft_perceptual/{src_task.name}2{dest_task.name}.pth"
-            if os.path.exists(path):
-                self.model_type, self.path = saved_type or (lambda: get_model(src_task, dest_task)), path
-                print ("Using finetuned: ", path)
-                return
 
         if self.model_type is None:
 
