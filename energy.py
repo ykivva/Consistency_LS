@@ -213,9 +213,8 @@ energy_configs = {
                 ],
                 error_pairs={
                     "n(x)": "n",
-                    "r(n(x))": "r(n)",
                     "r(x)": "r",
-                    "n(r(x))": "n(r)"}
+                    }
             ),
         },
     },
@@ -271,13 +270,13 @@ energy_configs = {
             },
             "direct:normal->depth_zbuffer": {
                 ("train", "val"): (
-                    ("n(x)", "n"),
+                    ("r(n)", "r"),
                     ([None, True], [None])
                 )
             },
             "direct:depth_zbuffer->normal": {
                 ("train", "val"): (
-                    ("n(x)", "n"),
+                    ("n(r)", "n"),
                     ([None, True], [None])
                 )
             },
