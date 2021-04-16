@@ -1,0 +1,5 @@
+multitask:x->n&r,
+latent_space,
+unet_based,
+YKIVVA_multitask:x->n&r_incremental_,
+.
